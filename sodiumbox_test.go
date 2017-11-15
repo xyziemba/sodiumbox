@@ -27,8 +27,6 @@ func TestRoundtrip(t *testing.T) {
 	for _, test := range roundtripTests {
 		t.Run(test.name, func(t *testing.T) {
 			msg := []byte(test.content)
-			_, err = rand.Read(msg)
-			assert.NoError(t, err)
 
 			box, err := sodiumbox.Seal(msg, pubkey)
 			assert.NoError(t, err)
