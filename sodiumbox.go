@@ -19,20 +19,14 @@ const KeySize = 32
 // Overhead is `len(boxedMsg) - len(originalMessage)`
 const Overhead = naclbox.Overhead + KeySize
 
-// GenerateKey creates a new keypair. It simply wraps the
-// underlying NaCl generator.
-func GenerateKey(rand io.Reader) (publicKey, privateKey *[32]byte, err error) {
-	return naclbox.GenerateKey(rand)
-}
-
 // Seal encrypts a message such that it can be read with the peer's keypair
-func Seal(msg []byte, peersPublicKey *[KeySize]byte) (box []byte, err error) {
+func Seal(msg []byte, peerPubkey *[KeySize]byte) (box []byte, err error) {
 	ephemeralPubkey, ephemeralPrivkey, err := naclbox.GenerateKey(rand.Reader)
 	if err != nil {
 		return nil, errors.Wrap(err, "sodiumbox: unable to generate keys")
 	}
 
-	nonce, err := genNonce(ephemeralPubkey, peersPublicKey)
+	nonce, err := genNonce(ephemeralPubkey, peerPubkey)
 	if err != nil {
 		return nil, errors.Wrap(err, "sodiumbox: unable to generate nonce")
 	}
@@ -40,12 +34,12 @@ func Seal(msg []byte, peersPublicKey *[KeySize]byte) (box []byte, err error) {
 	overhead := naclbox.Overhead + len(ephemeralPubkey)
 	box = make([]byte, 0, overhead+len(msg))
 	box = append(box, ephemeralPubkey[:]...)
-	box = naclbox.Seal(box, msg, nonce, peersPublicKey, ephemeralPrivkey)
+	box = naclbox.Seal(box, msg, nonce, peerPubkey, ephemeralPrivkey)
 	return
 }
 
 // Open authenticates and decrypts a box such that it can be read
-func Open(box []byte, pubKey, privKey *[32]byte) (msg []byte, err error) {
+func Open(box []byte, pubKey, privKey *[KeySize]byte) (msg []byte, err error) {
 	if len(box) < KeySize {
 		return nil, errors.New("sodiumbox: box contains less data than a pubkey")
 	}
@@ -61,6 +55,12 @@ func Open(box []byte, pubKey, privKey *[32]byte) (msg []byte, err error) {
 		return nil, errors.New("sodiumbox: unable to open box")
 	}
 	return
+}
+
+// GenerateKey creates a new keypair. It simply wraps the
+// underlying NaCl generator.
+func GenerateKey(rand io.Reader) (pubKey, privKey *[KeySize]byte, err error) {
+	return naclbox.GenerateKey(rand)
 }
 
 // genNonce creates a nonce from the two pubkeys in this transaction.
@@ -90,4 +90,3 @@ func genNonce(ephemeralPubkey, pubKey *[KeySize]byte) (*[NonceSize]byte, error) 
 
 	return nonce, nil
 }
-
