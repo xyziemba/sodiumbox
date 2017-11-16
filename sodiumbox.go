@@ -69,7 +69,8 @@ func Open(box []byte, pubKey, privKey *[32]byte) (msg []byte, err error) {
 func genNonce(ephemeralPubkey, pubKey *[KeySize]byte) (*[NonceSize]byte, error) {
 	nonce := &[NonceSize]byte{}
 
-	nonceHasher, err := blake2b.NewXOF(NonceSize, nil)
+	nonceHasher, err := blake2b.NewDigest(NonceSize, nil)
+	nonceHasher.Reset()
 	if err != nil {
 		return nil, err
 	}
@@ -84,13 +85,9 @@ func genNonce(ephemeralPubkey, pubKey *[KeySize]byte) (*[NonceSize]byte, error) 
 		return nil, err
 	}
 
-	n, err := nonceHasher.Read(nonce[:])
-	if err != nil {
-		return nil, err
-	}
-	if n != NonceSize {
-		return nil, err
-	}
+	nonceSlice := nonceHasher.Sum(nil)
+	copy(nonce[:], nonceSlice)
 
 	return nonce, nil
 }
+
