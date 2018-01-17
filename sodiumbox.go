@@ -69,7 +69,7 @@ func GenerateKey(rand io.Reader) (pubKey, privKey *[KeySize]byte, err error) {
 func genNonce(ephemeralPubkey, pubKey *[KeySize]byte) (*[NonceSize]byte, error) {
 	nonce := &[NonceSize]byte{}
 
-	nonceHasher, err := blake2b.NewDigest(NonceSize, nil)
+	nonceHasher, err := blake2b.New(NonceSize, nil)
 	nonceHasher.Reset()
 	if err != nil {
 		return nil, err

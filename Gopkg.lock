@@ -29,12 +29,11 @@
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["blake2b","curve25519","nacl/box","nacl/secretbox","poly1305","salsa20/salsa"]
-  revision = "59d91b2b73f3915403e419be7eb1ec08684bfc89"
-  source = "github.com/xyziemba/gocrypto"
+  revision = "13931e22f9e72ea58bb73048bc752b48c6d4d4ac"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "3606fe07490bad582393d839f58f94e3632c968608f076aa72e8dd7b1f9f0cb2"
+  inputs-digest = "0e71a423321e085a9d14a74c63693bbe895b41d479731729b6bde3ea27b43ab9"
   solver-name = "gps-cdcl"
   solver-version = 1

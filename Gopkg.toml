@@ -32,4 +32,3 @@
 [[constraint]]
   branch = "master"
   name = "golang.org/x/crypto"
-  source = "github.com/xyziemba/gocrypto"
