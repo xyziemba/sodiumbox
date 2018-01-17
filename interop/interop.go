@@ -10,7 +10,6 @@ package interop
 import "C"
 import (
 	"errors"
-	"fmt"
 	"log"
 	"unsafe"
 )
@@ -23,8 +22,6 @@ func init() {
 
 // NativeBoxSeal provides a wrapper around crypto_box_seal
 func NativeBoxSeal(msg []byte, recipientPubkey *[C.crypto_box_PUBLICKEYBYTES]byte) (box []byte) {
-	fmt.Println("asdf")
-	fmt.Println(C.crypto_box_PUBLICKEYBYTES)
 	boxLen := len(msg) + C.crypto_box_SEALBYTES
 
 	cBox := C.malloc(C.size_t(boxLen))
